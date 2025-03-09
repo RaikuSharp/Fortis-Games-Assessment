@@ -8,6 +8,8 @@ using Platformer.Mechanics;
 using Platformer.Model;
 using Platformer.Core;
 using Platformer.Gameplay;
+using System;
+using NUnit.Framework.Internal;
 
 public class PlayerTests : InputTestFixture
 {
@@ -84,6 +86,57 @@ public class PlayerTests : InputTestFixture
         Assert.That(model.player.health.IsAlive, Is.False);
         Debug.Log("Player is dead");
         yield return new WaitForSeconds(3);
+        Debug.Log("Test finished");
+    }
+
+    [UnityTest]
+    [Explicit, Category("PlayerController")]
+    public IEnumerator PlayerCollectsTokenTest()
+    {
+        Debug.Log("Initiating PlayerCollectsTokenTest");
+        yield return new WaitForSeconds(5);
+        Debug.Log("Walking into token");
+        var timeout = 4f;
+
+        while (timeout > 0)
+        {
+            Move(gamepad.leftStick, new Vector2(1, 0));
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+        LogAssert.Expect(LogType.Log, "Token collected by player");
+        Debug.Log("Test finished");
+    }
+
+    [UnityTest]
+    [Explicit, Category("EnemyController")]
+    public IEnumerator EnemyCollideWithTokenTest()
+    {
+        Debug.Log("Initiating EnemyCollideWithTokenTest");
+        yield return new WaitForSeconds(5);
+        Debug.Log("Walking into token");
+        var timeout = 4f;
+        var enemy = GameObject.Find("FirstEnemy").GetComponent<EnemyController>();
+        var enemyAnimationController = enemy.GetComponent<AnimationController>();
+        var tokenController = ScriptableObject.FindAnyObjectByType<TokenController>();
+
+        Assert.That(tokenController, Is.Not.Null);
+
+        GameObject player = GameObject.Find("Player");
+        player.SetActive(false);
+
+        var initialTokensCount = tokenController.tokens.Length;
+        Debug.Log($"Initial tokens count: {initialTokensCount}");
+
+        Debug.Log("Moving enemy to token");
+        while (timeout > 0)
+        {
+            enemyAnimationController.move.x -= 0.05f;
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+
+        Assert.That(tokenController.tokens.Length, Is.EqualTo(initialTokensCount));
         Debug.Log("Test finished");
     }
 }
