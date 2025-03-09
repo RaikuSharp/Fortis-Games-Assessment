@@ -52,7 +52,11 @@ namespace Platformer.Mechanics
             frame = 0;
             sprites = collectedAnimation;
             if (controller != null)
+            {
+                Debug.Log("Token collected by player");
                 collected = true;
+            }
+
             //send an event into the gameplay system to perform some behaviour.
             var ev = Schedule<PlayerTokenCollision>();
             ev.token = this;
