@@ -35,7 +35,7 @@ public class PlayerTests : InputTestFixture
         float timeout = 0f;
         Debug.Log("Initiation of PlayerJumpStateTest");
         // Wait for the scene to load
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         // initial jump state should be grounded
         Assert.That(model.player.jumpState, Is.EqualTo(PlayerController.JumpState.Grounded));
 
@@ -120,7 +120,7 @@ public class PlayerTests : InputTestFixture
             yield return null;
         }
 
-        // This test uses the LogAssert.Expect method as means to quickly verify that the token was collected.
+        // This test uses the LogAssert.Expect method as a means to quickly verify that the token was collected.
         LogAssert.Expect(LogType.Log, "Token collected by player");
         Assert.Pass("PlayerCollectsTokenTest passed");
     }
@@ -155,12 +155,12 @@ public class PlayerTests : InputTestFixture
         Debug.Log("Moving enemy to token");
         while (timeout > 0)
         {
-            enemyAnimationController.move.x -= 0.05f / Time.deltaTime;
+            enemyAnimationController.move.x -= 0.5f * Time.deltaTime;
             timeout -= Time.deltaTime;
             yield return null;
         }
 
-        // the test should only get to this point if the enemy wasn't able to collect the token
+        // is the initial token equal to the current token count?
         Assert.That(tokenController.tokens.Length, Is.EqualTo(initialTokensCount));
         Assert.Pass("EnemyCollideWithTokenTest passed");
     }
